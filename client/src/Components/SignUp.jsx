@@ -1,7 +1,35 @@
-import React from 'react'
-import { Grid, Paper, TextField, Button, Typography, Link } from '@mui/material';
+import React, {useState} from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { Grid, Link, Button, Paper, TextField, Typography } from "@mui/material";
+
 
 const SignUp = () => {
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleSignup = (e) =>{
+    e.preventDefault();
+    axios.post("http://localhost:3001/signup", { name, email, password })
+    .then(result=>{
+    if (result.status === 201) {
+      console.log("Registered  successfully ")
+      navigate("/signin");
+      }
+
+    })
+    .catch(err => {
+      if (err.response && err.response.status === 400) {
+          window.alert("Email already exists. Please use a different email.");
+      } else {
+          console.log(err);
+      }
+  });
+  }
+
   return (
     <>
     <Grid 
@@ -27,7 +55,7 @@ const SignUp = () => {
           >
             Sign Up
           </Typography>
-          <form >
+          <form onSubmit={handleSignup}>
             <TextField required
               label="Username" 
               margin="normal"
@@ -50,7 +78,8 @@ const SignUp = () => {
                 },
               }}
             />
-            <TextField required
+            <TextField 
+            required
               label="Email" 
               margin="normal"
               type='email'
@@ -72,7 +101,8 @@ const SignUp = () => {
                 },
               }}
             />
-            <TextField required
+            <TextField 
+            required
               label="Password" 
               margin="normal"
               type="password"
